@@ -15,13 +15,15 @@ export default function ProfessorDashboard() {
   const navigate = useNavigate()
   const [sessions, setSessions] = useState<Session[]>([])
   const [totalQuestions, setTotalQuestions] = useState(0)
+  const [pendingCount, setPendingCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([sessionsApi.list(), questionsApi.stats()])
-      .then(([sRes, qRes]) => {
+    Promise.all([sessionsApi.list(), questionsApi.stats(), questionsApi.pendingCount()])
+      .then(([sRes, qRes, pRes]) => {
         setSessions(sRes.data)
         setTotalQuestions(qRes.data.total)
+        setPendingCount(pRes.data.count)
       })
       .finally(() => setLoading(false))
   }, [])
@@ -54,10 +56,17 @@ export default function ProfessorDashboard() {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-4 gap-4 mb-8">
           <div className="bg-surface-card border border-surface-border rounded-xl p-5 text-center">
             <div className="text-3xl font-bold text-white">{totalQuestions}</div>
-            <div className="text-slate-400 text-sm mt-1">Questions in bank</div>
+            <div className="text-slate-400 text-sm mt-1">Active questions</div>
+          </div>
+          <div
+            className={`bg-surface-card border rounded-xl p-5 text-center cursor-pointer hover:bg-surface/50 transition-all ${pendingCount > 0 ? 'border-amber-500/50' : 'border-surface-border'}`}
+            onClick={() => navigate('/questions/bank')}
+          >
+            <div className={`text-3xl font-bold ${pendingCount > 0 ? 'text-amber-400' : 'text-white'}`}>{pendingCount}</div>
+            <div className="text-slate-400 text-sm mt-1">Pending review</div>
           </div>
           <div className="bg-surface-card border border-surface-border rounded-xl p-5 text-center">
             <div className="text-3xl font-bold text-white">{sessions.filter(s => s.status === 'completed').length}</div>
@@ -126,10 +135,10 @@ export default function ProfessorDashboard() {
           </button>
           <span className="text-slate-700">·</span>
           <button
-            onClick={() => navigate('/questions/drafts')}
+            onClick={() => navigate('/questions/bank')}
             className="text-slate-500 hover:text-slate-300 underline-offset-2 hover:underline transition-all"
           >
-            Review imported drafts →
+            Question Bank {pendingCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-amber-500 text-black text-xs font-bold rounded-full">{pendingCount}</span>} →
           </button>
         </div>
       </div>

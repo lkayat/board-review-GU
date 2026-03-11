@@ -315,8 +315,7 @@ export default function PresentationPage() {
               <ImageViewer
                 imageUrl={currentQuestion.image_url}
                 imageType={currentQuestion.image_type}
-                source={currentQuestion.source}
-                externalId={currentQuestion.external_id}
+                imageFrames={currentQuestion.image_frames}
                 alt="Radiology case image"
               />
             )}

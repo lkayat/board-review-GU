@@ -110,6 +110,56 @@ async def list_drafts(db: AsyncSession = Depends(get_db)):
     return result.scalars().all()
 
 
+@router.get("/pending", response_model=List[QuestionOut])
+async def list_pending(db: AsyncSession = Depends(get_db)):
+    """List all questions awaiting professor review."""
+    result = await db.execute(
+        select(Question).where(Question.status == "pending_review").order_by(Question.created_at.desc())
+    )
+    return result.scalars().all()
+
+
+@router.get("/pending-count")
+async def pending_count(db: AsyncSession = Depends(get_db)):
+    """Returns count of questions awaiting professor review."""
+    result = await db.execute(
+        select(func.count()).select_from(Question).where(Question.status == "pending_review")
+    )
+    return {"count": result.scalar() or 0}
+
+
+@router.get("/all", response_model=List[QuestionOut])
+async def list_all_questions(
+    status: Optional[str] = Query(None),
+    topic: Optional[str] = Query(None),
+    modality: Optional[str] = Query(None),
+    difficulty: Optional[str] = Query(None),
+    search: Optional[str] = Query(None),
+    limit: int = Query(200, le=500),
+    offset: int = Query(0),
+    db: AsyncSession = Depends(get_db),
+):
+    """List ALL questions regardless of status. Used by the Question Bank UI."""
+    filters = []
+    if status:
+        filters.append(Question.status == status)
+    if topic:
+        filters.append(Question.topic == topic)
+    if modality:
+        filters.append(Question.modality == modality)
+    if difficulty:
+        filters.append(Question.difficulty == difficulty)
+    if search:
+        filters.append(Question.question_text.ilike(f"%{search}%"))
+
+    query = select(Question)
+    if filters:
+        query = query.where(and_(*filters))
+    query = query.order_by(Question.created_at.desc()).offset(offset).limit(limit)
+    result = await db.execute(query)
+    return result.scalars().all()
+
+
 @router.get("/{question_id}", response_model=QuestionOut)
 async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Question).where(Question.id == question_id))
@@ -122,6 +172,8 @@ async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
 @router.post("", response_model=QuestionOut, status_code=201)
 async def create_question(payload: QuestionCreate, db: AsyncSession = Depends(get_db)):
     q = Question(**payload.model_dump())
+    q.status = "pending_review"
+    q.is_active = False
     db.add(q)
     await db.commit()
     await db.refresh(q)
@@ -153,6 +205,34 @@ async def activate_question(question_id: int, db: AsyncSession = Depends(get_db)
         raise HTTPException(status_code=404, detail="Question not found")
     q.status = "active"
     q.is_active = True
+    await db.commit()
+    await db.refresh(q)
+    return q
+
+
+@router.patch("/{question_id}/deactivate", response_model=QuestionOut)
+async def deactivate_question(question_id: int, db: AsyncSession = Depends(get_db)):
+    """Send a question back to draft (soft-deactivate without deleting)."""
+    result = await db.execute(select(Question).where(Question.id == question_id))
+    q = result.scalar_one_or_none()
+    if not q:
+        raise HTTPException(status_code=404, detail="Question not found")
+    q.status = "draft"
+    q.is_active = False
+    await db.commit()
+    await db.refresh(q)
+    return q
+
+
+@router.patch("/{question_id}/submit-review", response_model=QuestionOut)
+async def submit_for_review(question_id: int, db: AsyncSession = Depends(get_db)):
+    """Move a draft question to pending_review."""
+    result = await db.execute(select(Question).where(Question.id == question_id))
+    q = result.scalar_one_or_none()
+    if not q:
+        raise HTTPException(status_code=404, detail="Question not found")
+    q.status = "pending_review"
+    q.is_active = False
     await db.commit()
     await db.refresh(q)
     return q

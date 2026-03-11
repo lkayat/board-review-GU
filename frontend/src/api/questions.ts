@@ -8,8 +8,17 @@ export const questionsApi = {
   stats: () =>
     api.get<QuestionStats>('/api/questions/stats'),
 
+  all: (params?: Record<string, unknown>) =>
+    api.get<Question[]>('/api/questions/all', { params }),
+
   drafts: () =>
     api.get<Question[]>('/api/questions/drafts'),
+
+  pending: () =>
+    api.get<Question[]>('/api/questions/pending'),
+
+  pendingCount: () =>
+    api.get<{ count: number }>('/api/questions/pending-count'),
 
   get: (id: number) =>
     api.get<Question>(`/api/questions/${id}`),
@@ -19,6 +28,12 @@ export const questionsApi = {
 
   activate: (id: number) =>
     api.patch<Question>(`/api/questions/${id}/activate`),
+
+  deactivate: (id: number) =>
+    api.patch<Question>(`/api/questions/${id}/deactivate`),
+
+  submitReview: (id: number) =>
+    api.patch<Question>(`/api/questions/${id}/submit-review`),
 
   delete: (id: number) =>
     api.delete(`/api/questions/${id}`),
