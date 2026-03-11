@@ -32,8 +32,8 @@ async def build_session_questions(db: AsyncSession, config: SessionConfig) -> li
     if config.modalities:
         base_filters.append(Question.modality.in_(config.modalities))
 
-    # Difficulty filter
-    if config.difficulty:
+    # Difficulty filter (skip when "all" is selected)
+    if config.difficulty and config.difficulty != "all":
         base_filters.append(Question.difficulty == config.difficulty)
 
     # Fetch all matching questions
