@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 
     seed_data_path: str = "data/seed_questions.json"
     taxonomy_path: str = "data/gu_taxonomy.json"
+    anthropic_api_key: str = ""
 
     class Config:
         env_file = ".env"

@@ -165,12 +165,19 @@ async def sync_radiopaedia_cases(
     limit: int = 20,
 ) -> dict:
     """
-    Pull GU cases from Radiopaedia API and import them as draft questions.
-    Skips duplicates (via external_id).
-
-    Returns: {"fetched": N, "imported": M, "skipped": K}
+    Radiopaedia API integration is currently disabled.
+    Radiopaedia blocks API and iframe access via anti-scraping measures.
+    Use JSON file import to add questions instead.
     """
-    token = await _get_access_token()
+    return {
+        "error": "Radiopaedia integration is currently unavailable. Use JSON import to add questions.",
+        "fetched": 0,
+        "imported": 0,
+        "skipped": 0,
+    }
+
+    # Preserved for future re-enablement:
+    token = await _get_access_token()  # noqa: unreachable
     if not token:
         return {"error": "Radiopaedia API credentials not configured or token fetch failed.", "fetched": 0, "imported": 0, "skipped": 0}
 
