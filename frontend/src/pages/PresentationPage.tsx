@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { sessionsApi } from '../api/sessions'
@@ -20,7 +20,7 @@ interface CurrentQuestion {
   question_text: string
   option_a: string; option_b: string; option_c: string; option_d: string
   is_image_based: boolean
-  image_url?: string; image_type?: string
+  image_url?: string; image_type?: string; image_frames?: string[]
   source?: string; external_id?: string
   correct_answer?: string
   explanation?: string
