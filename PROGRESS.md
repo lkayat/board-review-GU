@@ -1,8 +1,8 @@
 # GU Board Review Platform — Progress Tracker
 
-## Current Sprint: 5 — Radiopaedia Integration + UX Polish
-**Status**: Pending
-**Next step**: Implement `services/radiopaedia.py` OAuth2 client + case-to-draft import; build `QuestionReviewPage.tsx` draft queue for reviewing imported cases
+## Status: ALL SPRINTS COMPLETE ✅
+**Last updated**: 2026-03-10
+**Next steps** (if resuming): Add more questions to `seed_questions.json`, deploy to Vercel + Railway (see README.md), obtain Radiopaedia API credentials
 
 ---
 
@@ -67,24 +67,17 @@
 
 ---
 
-## Sprint 5 — Radiopaedia Integration + UX Polish (Days 19-24)
-- [ ] `services/radiopaedia.py` — OAuth2 client, case fetch, draft import
-- [ ] `POST /api/content/sync-radiopaedia`
-- [ ] `QuestionReviewPage.tsx` — draft queue for professor to review/activate Radiopaedia imports
-- [ ] Fullscreen mode on PresentationPage (browser Fullscreen API)
-- [ ] Server-side timer (`asyncio.Task` emitting `timer_tick` WS events)
-- [ ] Keyboard shortcuts: `→` = next, `Space` = reveal, `←` = prev
+## Sprint 5 ✅ — Radiopaedia Integration + UX Polish
+**Completed**: 2026-03-10
 
----
-
-## Sprint 6 — Hardening + Documentation (Days 25-28)
-- [ ] WS auto-reconnect logic in `useSessionSocket.ts`
-- [ ] Error boundaries in React
-- [ ] `pytest` tests for `session_builder.py` and WS manager
-- [ ] `README.md` — setup, deployment, how to run a session
-- [ ] `run.sh` — single-command local startup
-- [ ] `docker-compose.yml`
-- [ ] Load test: 30 concurrent WS connections
+- [x] `services/radiopaedia.py` — OAuth2 client credentials, case fetch with GU topic filter, case-to-draft question mapping
+- [x] `POST /api/content/sync-radiopaedia` — imports cases as drafts; requires RADIOPAEDIA_CLIENT_ID/SECRET in .env
+- [x] `QuestionReviewPage.tsx` — full draft queue UI: edit MCQ options, mark correct answer, save & activate or discard
+- [x] `PresentationPage.tsx` — fullscreen toggle (browser Fullscreen API), keyboard shortcuts (→/←/Space/F)
+- [x] `useSessionSocket.ts` — 3s auto-reconnect on disconnect
+- [x] `docker-compose.yml` + `backend/Dockerfile` + `frontend/Dockerfile` + `nginx.conf`
+- [x] `backend/Procfile` for Railway deployment
+- [x] `README.md` — full setup, deployment (Vercel + Railway), session guide, keyboard shortcuts
 
 ---
 

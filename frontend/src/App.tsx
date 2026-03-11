@@ -5,6 +5,7 @@ import PresentationPage from './pages/PresentationPage'
 import SummaryPage from './pages/SummaryPage'
 import ProfessorDashboard from './pages/ProfessorDashboard'
 import ResidentSessionPage from './pages/ResidentSessionPage'
+import QuestionReviewPage from './pages/QuestionReviewPage'
 
 export default function App() {
   return (
@@ -20,6 +21,9 @@ export default function App() {
       <Route path="/join" element={<ResidentJoinPage />} />
       <Route path="/join/:code" element={<ResidentJoinPage />} />
       <Route path="/session/:code/resident" element={<ResidentSessionPage />} />
+
+      {/* Question management */}
+      <Route path="/questions/drafts" element={<QuestionReviewPage />} />
     </Routes>
   )
 }
