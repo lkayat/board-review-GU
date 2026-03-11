@@ -35,3 +35,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Claude Code session files
+.claude/
+
+# Generated question JSON exports (import via Question Bank instead)
+*-[0-9]q.json
