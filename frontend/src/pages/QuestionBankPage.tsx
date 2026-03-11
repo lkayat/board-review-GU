@@ -285,12 +285,6 @@ export default function QuestionBankPage() {
           </div>
           <div className="flex gap-3">
             <button
-              onClick={() => { setShowGenModal(true); setGenError('') }}
-              className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-all"
-            >
-              ✦ Generate with AI
-            </button>
-            <button
               onClick={() => fileInputRef.current?.click()}
               disabled={importing}
               className="px-4 py-2 rounded-lg border border-brand-500/60 text-brand-500 hover:bg-brand-900/20 text-sm transition-all disabled:opacity-50"
