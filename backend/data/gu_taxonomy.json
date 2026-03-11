@@ -1,0 +1,147 @@
+{
+  "topics": [
+    {
+      "code": "kidney",
+      "label": "Kidneys",
+      "subtopics": [
+        { "code": "kidney.rcc", "label": "Renal Cell Carcinoma" },
+        { "code": "kidney.stone", "label": "Nephrolithiasis / Urolithiasis" },
+        { "code": "kidney.cyst", "label": "Renal Cysts (Bosniak)" },
+        { "code": "kidney.aml", "label": "Angiomyolipoma" },
+        { "code": "kidney.oncocytoma", "label": "Oncocytoma" },
+        { "code": "kidney.tcc", "label": "Urothelial Carcinoma of Renal Pelvis" },
+        { "code": "kidney.infection", "label": "Pyelonephritis / Abscess" },
+        { "code": "kidney.vascular", "label": "Renal Vascular (infarct, RAS)" },
+        { "code": "kidney.congenital", "label": "Congenital Anomalies (horseshoe, duplex)" },
+        { "code": "kidney.trauma", "label": "Renal Trauma (AAST grading)" },
+        { "code": "kidney.transplant", "label": "Renal Transplant Complications" }
+      ],
+      "distractors": [
+        "Renal cell carcinoma", "Angiomyolipoma", "Oncocytoma", "Renal abscess",
+        "Transitional cell carcinoma", "Lymphoma", "Metastasis", "Renal infarct",
+        "Complicated cyst", "Xanthogranulomatous pyelonephritis"
+      ]
+    },
+    {
+      "code": "bladder",
+      "label": "Bladder",
+      "subtopics": [
+        { "code": "bladder.tcc", "label": "Urothelial Carcinoma of Bladder" },
+        { "code": "bladder.infection", "label": "Cystitis (infectious, radiation)" },
+        { "code": "bladder.congenital", "label": "Bladder Diverticulum / Urachal Anomalies" },
+        { "code": "bladder.trauma", "label": "Bladder Trauma (intra/extraperitoneal rupture)" }
+      ],
+      "distractors": [
+        "Urothelial carcinoma", "Rhabdomyosarcoma", "Adenocarcinoma", "Bladder stone",
+        "Intraperitoneal rupture", "Extraperitoneal rupture", "Cystitis cystica", "Urachal carcinoma"
+      ]
+    },
+    {
+      "code": "prostate",
+      "label": "Prostate",
+      "subtopics": [
+        { "code": "prostate.cancer", "label": "Prostate Carcinoma (PI-RADS)" },
+        { "code": "prostate.bph", "label": "Benign Prostatic Hyperplasia" },
+        { "code": "prostate.abscess", "label": "Prostate Abscess / Prostatitis" },
+        { "code": "prostate.staging", "label": "Staging / Extracapsular Extension" }
+      ],
+      "distractors": [
+        "Prostate carcinoma", "BPH", "Prostatitis", "Seminal vesicle cyst",
+        "Extracapsular extension", "Seminal vesicle invasion", "Lymph node metastasis"
+      ]
+    },
+    {
+      "code": "adrenal",
+      "label": "Adrenal",
+      "subtopics": [
+        { "code": "adrenal.adenoma", "label": "Adrenal Adenoma (washout criteria)" },
+        { "code": "adrenal.pheochromocytoma", "label": "Pheochromocytoma" },
+        { "code": "adrenal.myelolipoma", "label": "Myelolipoma" },
+        { "code": "adrenal.metastasis", "label": "Adrenal Metastasis" },
+        { "code": "adrenal.hyperplasia", "label": "Adrenal Hyperplasia / Conn's Syndrome" },
+        { "code": "adrenal.hemorrhage", "label": "Adrenal Hemorrhage" }
+      ],
+      "distractors": [
+        "Adrenal adenoma", "Pheochromocytoma", "Myelolipoma", "Adrenal metastasis",
+        "Adrenocortical carcinoma", "Ganglioneuroma", "Adrenal hemorrhage", "Neuroblastoma"
+      ]
+    },
+    {
+      "code": "ureter",
+      "label": "Ureter",
+      "subtopics": [
+        { "code": "ureter.stone", "label": "Ureteral Stone / Hydronephrosis" },
+        { "code": "ureter.tcc", "label": "Urothelial Carcinoma of Ureter" },
+        { "code": "ureter.stricture", "label": "Ureteral Stricture" },
+        { "code": "ureter.congenital", "label": "UPJ / UVJ Obstruction, Ureterocele" }
+      ],
+      "distractors": [
+        "Ureteral stone", "Urothelial carcinoma", "Stricture", "Extrinsic compression",
+        "Ureterocele", "UPJ obstruction", "Retroperitoneal fibrosis", "Blood clot"
+      ]
+    },
+    {
+      "code": "urethra",
+      "label": "Urethra",
+      "subtopics": [
+        { "code": "urethra.stricture", "label": "Urethral Stricture" },
+        { "code": "urethra.trauma", "label": "Urethral Trauma" },
+        { "code": "urethra.cancer", "label": "Urethral Carcinoma" }
+      ],
+      "distractors": [
+        "Urethral stricture", "Urethral diverticulum", "Urethral carcinoma",
+        "Posterior urethral valves", "Periurethral abscess", "Cowper duct cyst"
+      ]
+    },
+    {
+      "code": "scrotum",
+      "label": "Scrotum / Testes",
+      "subtopics": [
+        { "code": "scrotum.torsion", "label": "Testicular Torsion" },
+        { "code": "scrotum.cancer", "label": "Testicular Malignancy (seminoma, NSGCT)" },
+        { "code": "scrotum.epididymitis", "label": "Epididymo-orchitis" },
+        { "code": "scrotum.varicocele", "label": "Varicocele / Hydrocele" },
+        { "code": "scrotum.trauma", "label": "Scrotal Trauma" }
+      ],
+      "distractors": [
+        "Seminoma", "Non-seminomatous germ cell tumor", "Epididymo-orchitis",
+        "Testicular torsion", "Lymphoma", "Epidermoid cyst", "Leydig cell tumor",
+        "Varicocele", "Hydrocele", "Spermatocele"
+      ]
+    },
+    {
+      "code": "female_gu",
+      "label": "Female GU",
+      "subtopics": [
+        { "code": "female_gu.uterus_fibroid", "label": "Uterine Fibroids (Leiomyoma)" },
+        { "code": "female_gu.uterus_cancer", "label": "Endometrial Carcinoma" },
+        { "code": "female_gu.cervix_cancer", "label": "Cervical Carcinoma (FIGO staging)" },
+        { "code": "female_gu.ovary_cyst", "label": "Ovarian Cysts (O-RADS)" },
+        { "code": "female_gu.ovary_cancer", "label": "Ovarian Carcinoma" },
+        { "code": "female_gu.endometriosis", "label": "Endometriosis / Adenomyosis" },
+        { "code": "female_gu.torsion", "label": "Adnexal Torsion" },
+        { "code": "female_gu.ectopic", "label": "Ectopic Pregnancy" },
+        { "code": "female_gu.mullerian", "label": "Mullerian Duct Anomalies" }
+      ],
+      "distractors": [
+        "Leiomyoma", "Endometrial carcinoma", "Cervical carcinoma", "Ovarian carcinoma",
+        "Endometrioma", "Dermoid cyst", "Serous cystadenoma", "Mucinous cystadenoma",
+        "Adnexal torsion", "Ectopic pregnancy", "Adenomyosis", "Fallopian tube carcinoma"
+      ]
+    },
+    {
+      "code": "retroperitoneum",
+      "label": "Retroperitoneum",
+      "subtopics": [
+        { "code": "retroperitoneum.lymphoma", "label": "Retroperitoneal Lymphadenopathy" },
+        { "code": "retroperitoneum.sarcoma", "label": "Retroperitoneal Sarcoma" },
+        { "code": "retroperitoneum.fibrosis", "label": "Retroperitoneal Fibrosis" },
+        { "code": "retroperitoneum.hematoma", "label": "Retroperitoneal Hematoma" }
+      ],
+      "distractors": [
+        "Retroperitoneal sarcoma", "Lymphoma", "Retroperitoneal fibrosis", "Hematoma",
+        "Liposarcoma", "Leiomyosarcoma", "Paraganglioma", "Metastatic lymphadenopathy"
+      ]
+    }
+  ]
+}
