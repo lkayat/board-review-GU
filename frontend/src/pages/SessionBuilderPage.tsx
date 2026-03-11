@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { questionsApi } from '../api/questions'
+import { sessionsApi } from '../api/sessions'
 import type { QuestionStats, TopicStat } from '../types/question'
 import type { SessionConfig } from '../types/session'
 
@@ -71,7 +72,6 @@ export default function SessionBuilderPage() {
     setCreating(true)
     setError('')
     try {
-      // Session creation wired in Sprint 2 — for now navigate to builder confirmation
       const config: SessionConfig = {
         topics: selectedTopics,
         modalities: selectedModalities.length > 0 ? selectedModalities : undefined,
@@ -80,10 +80,11 @@ export default function SessionBuilderPage() {
         image_pct: imagePct,
         timer_seconds: timerSeconds > 0 ? timerSeconds : undefined,
       }
-      console.log('Session config ready (Sprint 2 will wire this):', { name: sessionName, config })
-      alert('Session builder is configured! Session creation will be wired in Sprint 2.')
-    } catch {
-      setError('Failed to create session.')
+      const res = await sessionsApi.create(sessionName || undefined, config)
+      navigate(`/session/${res.data.id}/present`)
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      setError(msg || 'Failed to create session.')
     } finally {
       setCreating(false)
     }

@@ -8,7 +8,9 @@ import logging
 from config import settings
 from database import create_tables, AsyncSessionLocal
 from services.content_importer import seed_from_json
-from routers import questions, content
+from routers import questions, content, sessions, answers, auth
+from fastapi import WebSocket, Query
+from ws.session_ws import session_websocket
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,8 +47,21 @@ app.add_middleware(
 )
 
 # Routers
+app.include_router(auth.router)
 app.include_router(questions.router)
+app.include_router(sessions.router)
+app.include_router(answers.router)
 app.include_router(content.router)
+
+
+# WebSocket endpoint
+@app.websocket("/ws/session/{session_code}")
+async def ws_session(
+    websocket: WebSocket,
+    session_code: str,
+    role: str = Query("resident"),
+):
+    await session_websocket(websocket, session_code, role)
 
 
 @app.get("/api/health")

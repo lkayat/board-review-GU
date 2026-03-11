@@ -1,8 +1,8 @@
 # GU Board Review Platform — Progress Tracker
 
-## Current Sprint: 2 — Session Lifecycle (professor presentation flow)
+## Current Sprint: 5 — Radiopaedia Integration + UX Polish
 **Status**: Pending
-**Next step**: Implement `POST /api/sessions` (session builder endpoint), `PATCH /advance`, `PATCH /reveal`, then build `PresentationPage.tsx`
+**Next step**: Implement `services/radiopaedia.py` OAuth2 client + case-to-draft import; build `QuestionReviewPage.tsx` draft queue for reviewing imported cases
 
 ---
 
@@ -35,43 +35,35 @@
 
 ---
 
-## Sprint 2 — Session Lifecycle (Days 5-9)
-**Goal**: Create sessions, navigate questions, reveal answers on professor screen (REST polling only, no WS yet)
+## Sprint 2 ✅ — Session Lifecycle
+**Completed**: 2026-03-10
 
-**Backend TODOs:**
-- [ ] `services/session_builder.py` — question selection logic (topic/modality/difficulty/image-ratio filters + random sampling)
-- [ ] `routers/sessions.py` — `POST /sessions`, `PATCH /sessions/{id}/start`, `PATCH /sessions/{id}/advance`, `PATCH /sessions/{id}/reveal`, `PATCH /sessions/{id}/complete`
-- [ ] `routers/auth.py` — professor JWT login
-- [ ] Wire session routers into `main.py`
+- [x] `services/session_builder.py` — question selection with topic/modality/difficulty/image-ratio + random sampling
+- [x] `routers/sessions.py` — full session lifecycle: POST, start, advance, reveal, complete, summary, join-by-code
+- [x] `routers/auth.py` — professor JWT login (bcrypt + jose)
+- [x] `routers/answers.py` — resident answer submission with aggregate increment
+- [x] All routers + WS endpoint wired into `main.py`
 
-**Frontend TODOs:**
-- [ ] `SessionBuilderPage.tsx` — wire submit to `sessionsApi.create()`; redirect to presentation page
-- [ ] `PresentationPage.tsx` — full professor session screen: QuestionCard, ImageViewer, ChoiceList, RevealPanel, NavigationBar, ProgressIndicator, SessionTimer
-- [ ] `components/presentation/ImageViewer.tsx` — iframe embed for Radiopaedia, zoomable img for local
-- [ ] `components/presentation/RevealPanel.tsx`
-- [ ] `components/presentation/AggregateBar.tsx` (stub — data wired in Sprint 4)
-- [ ] `pages/ProfessorDashboard.tsx` — list recent sessions, link to builder
+## Sprint 3 ✅ — Summary + Auth + Dashboard
+**Completed**: 2026-03-10
 
----
+- [x] `GET /api/sessions/{id}/summary` — per-topic + per-question breakdown
+- [x] `SummaryPage.tsx` — overall %, topic bars, expandable question review list
+- [x] `ProfessorDashboard.tsx` — session list, question bank stats, quick nav
+- [x] `routers/auth.py` — `/api/auth/login` + `/api/auth/me`
 
-## Sprint 3 — Summary + Auth (Days 10-12)
-- [ ] `GET /api/sessions/{id}/summary` endpoint
-- [ ] `SummaryPage.tsx` with per-topic breakdown and question review list
-- [ ] Professor login: `POST /api/auth/login` → JWT
-- [ ] Protected route wrapper in React
-- [ ] `ProfessorDashboard.tsx` with session history
+## Sprint 4 ✅ — WebSockets + Resident Participation
+**Completed**: 2026-03-10
 
----
-
-## Sprint 4 — WebSockets + Resident Participation (Days 13-18)
-- [ ] `services/websocket_manager.py` — ConnectionManager
-- [ ] `ws/session_ws.py` — WS endpoint
-- [ ] Modify advance/reveal endpoints to broadcast WS events
-- [ ] `POST /api/answers` — increment aggregate, broadcast aggregate_update
-- [ ] `useSessionSocket.ts` hook
-- [ ] `AggregateBar.tsx` — live resident answer bars
-- [ ] Resident flow: `ResidentSessionPage.tsx`, `WaitingScreen`, `ResidentQuestion`, `RevealFeedback`
-- [ ] QR code display on PresentationPage (`qrcode.react`)
+- [x] `services/websocket_manager.py` — ConnectionManager (professor + resident pools per session)
+- [x] `ws/session_ws.py` — WS endpoint with initial state sync on connect
+- [x] All state-mutating REST endpoints broadcast WS events on change
+- [x] `useSessionSocket.ts` — WS hook with auto-reconnect (3s)
+- [x] `useSessionTimer.ts` — client-side countdown timer hook
+- [x] `components/presentation/ImageViewer.tsx` — Radiopaedia iframe embed + local zoom
+- [x] `components/presentation/AggregateBar.tsx` — live choice distribution with correct answer highlight
+- [x] `PresentationPage.tsx` — full professor screen: image, question, choices, reveal, live aggregate, QR code, keyboard shortcuts (→ next, ← prev, Space = reveal, F = fullscreen)
+- [x] `ResidentSessionPage.tsx` — mobile-friendly join flow: waiting → active → reveal feedback → ended
 
 ---
 
