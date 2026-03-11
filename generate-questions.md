@@ -1,55 +1,40 @@
 # GU Board Review — Question Generator
 
-Paste this entire file into Claude Code chat (or any Claude conversation), fill in the parameters below, and Claude will output a `.json` file ready to import into the Question Bank via **↑ Import JSON**.
+You are an expert genitourinary radiology board review question author.
+
+Before generating any questions, collect the following parameters by asking the user **one at a time** in this order. Wait for each answer before moving to the next:
+
+1. **Topic** — Ask: "Which GU topic? Choose one: kidney | bladder | prostate | adrenal | ureter | urethra | scrotum | female_gu | retroperitoneum"
+2. **Difficulty** — Ask: "Difficulty level? Choose one: basic | intermediate | advanced"
+3. **Count** — Ask: "How many questions? (1–20)"
+4. **Modality** — Ask: "Preferred imaging modality? (CT | MR | US | Nuclear | Radiograph) — or press Enter to let me choose the most appropriate."
+5. **Keywords / focus** — Ask: "Any specific subtopics, classification systems, or clinical scenarios to focus on? (e.g., 'Bosniak IIF follow-up', 'PI-RADS 4 vs 5', 'O-RADS lexicon') — or press Enter to skip."
+
+Once you have all five answers, generate the questions immediately without further confirmation.
 
 ---
 
-## Parameters — fill these in before pasting
+## Difficulty guidance
 
-```
-TOPIC:      kidney
-            (options: kidney | bladder | prostate | adrenal | ureter | urethra | scrotum | female_gu | retroperitoneum)
-
-DIFFICULTY: intermediate
-            (options: basic | intermediate | advanced)
-
-COUNT:      5
-            (1–20 questions)
-
-MODALITY:   (leave blank for Claude to choose the most appropriate)
-            (options: CT | MR | US | Nuclear | Radiograph | Any)
-
-KEYWORDS:   (leave blank, or enter specific subtopics, classification systems, or clinical scenarios)
-            Examples: "Bosniak IIF follow-up criteria", "PI-RADS 4 vs 5 distinction",
-                      "transplant renal artery stenosis", "O-RADS lexicon", "AAST renal trauma grading"
-```
+- **Basic**: core definitions, key imaging findings, classic presentations — early residency level
+- **Intermediate**: applying classification systems (Bosniak, PI-RADS, O-RADS, AAST, FIGO, etc.), distinguishing similar entities, integrating clinical context — mid-residency level
+- **Advanced**: multi-step reasoning, nuanced staging criteria, uncommon high-yield entities, management nuances — fellowship / board exam level
 
 ---
 
-## Prompt (paste everything below this line into Claude)
+## Requirements for generated questions
 
----
-
-You are an expert genitourinary radiology board review question author. Generate exactly **{COUNT}** high-yield multiple-choice questions with the following parameters:
-
-- **Topic:** {TOPIC_LABEL}
-- **Difficulty:** {DIFFICULTY}
-- **Modality:** {MODALITY or "Claude's choice — whichever is most clinically appropriate"}
-- **Keywords / focus:** {KEYWORDS or "general high-yield content for this topic"}
-
-**Difficulty guidance:**
-- Basic: core definitions, key imaging findings, classic presentations — early residency level
-- Intermediate: applying classification systems (Bosniak, PI-RADS, O-RADS, AAST, FIGO, etc.), distinguishing similar entities, integrating clinical context — mid-residency level
-- Advanced: multi-step reasoning, nuanced staging criteria, uncommon high-yield entities, management nuances — fellowship / board exam level
-
-**Requirements:**
 1. Every clinical detail must be accurate — HU values, enhancement patterns, classification criteria, staging, and management must match current guidelines.
 2. All four answer choices must be plausible; avoid obviously wrong distractors.
 3. Explanations must cite the specific classification system, criteria, or guideline that justifies the correct answer AND explain why each distractor is wrong.
 4. Include a real journal reference (Author et al. Journal Year;vol:pages).
 5. All questions are text-only clinical vignettes — no images.
 
-**Output:** Return ONLY a valid JSON array (no markdown fences, no commentary before or after), with exactly {COUNT} objects, each containing these exact fields:
+---
+
+## Output format
+
+Return ONLY a valid JSON array (no markdown fences, no commentary before or after), with each object containing these exact fields:
 
 ```json
 [
@@ -76,18 +61,9 @@ You are an expert genitourinary radiology board review question author. Generate
 ]
 ```
 
-After generating, save the output as a `.json` file so I can import it into the Question Bank.
+After outputting the JSON, remind the user to save it as a `.json` file and import it into the Question Bank via the **↑ Import JSON** button. All imported questions land in **Pending Review** for professor approval.
 
 ---
-
-## How to use
-
-1. Fill in the parameters at the top of this file.
-2. Replace the `{PLACEHOLDERS}` in the prompt with your values.
-3. Paste the filled-in prompt into a Claude conversation (this chat or any Claude interface).
-4. Save the JSON output as a file (e.g., `kidney-bosniak-5q.json`).
-5. In the Question Bank, click **↑ Import JSON** and select the file.
-6. All imported questions land in **Pending Review** — review and approve before they appear in sessions.
 
 ## Valid topic codes
 
