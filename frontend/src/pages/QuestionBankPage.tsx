@@ -89,6 +89,16 @@ export default function QuestionBankPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importing, setImporting] = useState(false)
 
+  // AI generation modal state
+  const [showGenModal, setShowGenModal] = useState(false)
+  const [genTopic, setGenTopic] = useState('kidney')
+  const [genDifficulty, setGenDifficulty] = useState('intermediate')
+  const [genCount, setGenCount] = useState(5)
+  const [genModality, setGenModality] = useState('')
+  const [genKeywords, setGenKeywords] = useState('')
+  const [generating, setGenerating] = useState(false)
+  const [genError, setGenError] = useState('')
+
   const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(''), 3000)
@@ -234,6 +244,29 @@ export default function QuestionBankPage() {
     }
   }
 
+  const handleGenerate = async () => {
+    setGenerating(true)
+    setGenError('')
+    try {
+      const res = await questionsApi.generate({
+        topic: genTopic,
+        difficulty: genDifficulty,
+        count: genCount,
+        modality: genModality || undefined,
+        keywords: genKeywords || undefined,
+      })
+      showToast(`Generated ${res.data.length} questions → Pending Review.`)
+      await loadCounts()
+      setShowGenModal(false)
+      switchTab('pending_review')
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      setGenError(msg || 'Generation failed. Check that ANTHROPIC_API_KEY is set.')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   const tabs: { id: Tab; label: string }[] = [
     { id: 'pending_review', label: `Pending Review (${counts.pending_review ?? '…'})` },
     { id: 'active', label: `Active (${counts.active ?? '…'})` },
@@ -251,6 +284,12 @@ export default function QuestionBankPage() {
             <p className="text-slate-400 mt-1 text-sm">Review, edit, and approve questions before they appear in sessions</p>
           </div>
           <div className="flex gap-3">
+            <button
+              onClick={() => { setShowGenModal(true); setGenError('') }}
+              className="px-4 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium transition-all"
+            >
+              ✦ Generate with AI
+            </button>
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={importing}
@@ -583,6 +622,113 @@ export default function QuestionBankPage() {
           </div>
         )}
       </div>
+
+      {/* AI Generation Modal */}
+      {showGenModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-card border border-surface-border rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h2 className="text-lg font-semibold text-white mb-1">Generate Questions with AI</h2>
+            <p className="text-slate-400 text-sm mb-5">Claude will write board-style questions and add them to Pending Review for your approval.</p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-slate-300 text-sm mb-1">Topic</label>
+                <select
+                  value={genTopic}
+                  onChange={e => setGenTopic(e.target.value)}
+                  className="w-full bg-surface border border-surface-border rounded-lg px-3 py-2 text-white text-sm"
+                >
+                  {TOPICS.filter(t => t).map(t => (
+                    <option key={t} value={t}>{TOPIC_LABELS[t] || t}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 text-sm mb-1">Difficulty</label>
+                  <select
+                    value={genDifficulty}
+                    onChange={e => setGenDifficulty(e.target.value)}
+                    className="w-full bg-surface border border-surface-border rounded-lg px-3 py-2 text-white text-sm"
+                  >
+                    <option value="basic">Basic</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-300 text-sm mb-1">Count (1–10)</label>
+                  <input
+                    type="number" min={1} max={10}
+                    value={genCount}
+                    onChange={e => setGenCount(Math.min(10, Math.max(1, Number(e.target.value))))}
+                    className="w-full bg-surface border border-surface-border rounded-lg px-3 py-2 text-white text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 text-sm mb-1">Modality <span className="text-slate-500">(optional)</span></label>
+                <select
+                  value={genModality}
+                  onChange={e => setGenModality(e.target.value)}
+                  className="w-full bg-surface border border-surface-border rounded-lg px-3 py-2 text-white text-sm"
+                >
+                  <option value="">Any (CT, MR, US, Nuclear…)</option>
+                  <option value="CT">CT</option>
+                  <option value="MR">MR</option>
+                  <option value="US">Ultrasound</option>
+                  <option value="Nuclear">Nuclear Medicine</option>
+                  <option value="Radiograph">Radiograph</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 text-sm mb-1">Keywords / focus <span className="text-slate-500">(optional)</span></label>
+                <input
+                  type="text"
+                  placeholder="e.g. Bosniak classification, transplant rejection, PI-RADS 4…"
+                  value={genKeywords}
+                  onChange={e => setGenKeywords(e.target.value)}
+                  className="w-full bg-surface border border-surface-border rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"
+                />
+                <p className="text-slate-500 text-xs mt-1">Specific subtopics, classification systems, or clinical scenarios to focus on.</p>
+              </div>
+            </div>
+
+            {genError && (
+              <div className="mt-4 bg-red-900/30 border border-red-700 rounded-lg px-3 py-2 text-red-300 text-sm">
+                {genError}
+              </div>
+            )}
+
+            {generating && (
+              <div className="mt-4 bg-brand-900/30 border border-brand-700/40 rounded-lg px-3 py-2 text-brand-300 text-sm flex items-center gap-2">
+                <span className="animate-pulse">⟳</span>
+                Claude is writing questions… this takes 15–45 seconds.
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleGenerate}
+                disabled={generating}
+                className="flex-1 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg text-sm transition-all disabled:opacity-50"
+              >
+                {generating ? 'Generating…' : `Generate ${genCount} Question${genCount !== 1 ? 's' : ''}`}
+              </button>
+              <button
+                onClick={() => setShowGenModal(false)}
+                disabled={generating}
+                className="px-4 py-2.5 border border-surface-border text-slate-400 rounded-lg text-sm hover:border-slate-500 transition-all disabled:opacity-40"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

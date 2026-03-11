@@ -3,10 +3,12 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
 from typing import Optional, List
+from pydantic import BaseModel
 
 from database import get_db
 from models.question import Question
 from schemas.question import QuestionOut, QuestionCreate, QuestionUpdate, QuestionStatsOut, TopicStat
+from config import settings
 
 router = APIRouter(prefix="/api/questions", tags=["questions"])
 
@@ -158,6 +160,75 @@ async def list_all_questions(
     query = query.order_by(Question.created_at.desc()).offset(offset).limit(limit)
     result = await db.execute(query)
     return result.scalars().all()
+
+
+class GenerateRequest(BaseModel):
+    topic: str
+    difficulty: str = "intermediate"
+    count: int = 5
+    subtopic: Optional[str] = None
+    modality: Optional[str] = None
+    keywords: Optional[str] = None
+
+
+@router.post("/generate", response_model=List[QuestionOut], status_code=201)
+async def generate_questions(payload: GenerateRequest, db: AsyncSession = Depends(get_db)):
+    """Use Claude AI to generate board review questions and insert them as pending_review."""
+    from services.ai_generator import generate_questions_with_ai
+
+    valid_topics = {"kidney", "bladder", "prostate", "adrenal", "ureter", "urethra", "scrotum", "female_gu", "retroperitoneum"}
+    if payload.topic not in valid_topics:
+        raise HTTPException(status_code=422, detail=f"Invalid topic. Must be one of: {', '.join(sorted(valid_topics))}")
+    if payload.count < 1 or payload.count > 10:
+        raise HTTPException(status_code=422, detail="count must be between 1 and 10")
+
+    try:
+        raw_questions = await generate_questions_with_ai(
+            topic=payload.topic,
+            difficulty=payload.difficulty,
+            count=payload.count,
+            subtopic=payload.subtopic,
+            modality=payload.modality,
+            keywords=payload.keywords,
+            api_key=settings.anthropic_api_key or None,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI generation failed: {str(e)}")
+
+    inserted = []
+    for q_data in raw_questions:
+        q = Question(
+            source=q_data.get("source", "ai_generated"),
+            question_text=q_data.get("question_text", ""),
+            option_a=q_data.get("option_a", ""),
+            option_b=q_data.get("option_b", ""),
+            option_c=q_data.get("option_c", ""),
+            option_d=q_data.get("option_d", ""),
+            correct_answer=q_data.get("correct_answer", "A"),
+            explanation=q_data.get("explanation", ""),
+            reference=q_data.get("reference"),
+            image_url=q_data.get("image_url"),
+            image_frames=json.dumps(q_data["image_frames"]) if q_data.get("image_frames") else None,
+            image_type=q_data.get("image_type"),
+            is_image_based=False,
+            topic=q_data.get("topic", payload.topic),
+            subtopic=q_data.get("subtopic"),
+            modality=q_data.get("modality"),
+            difficulty=q_data.get("difficulty", payload.difficulty),
+            tags=json.dumps(q_data.get("tags", [])),
+            status="pending_review",
+            is_active=False,
+        )
+        db.add(q)
+        inserted.append(q)
+
+    await db.commit()
+    for q in inserted:
+        await db.refresh(q)
+
+    return inserted
 
 
 @router.get("/{question_id}", response_model=QuestionOut)

@@ -38,6 +38,15 @@ export const questionsApi = {
   delete: (id: number) =>
     api.delete(`/api/questions/${id}`),
 
+  generate: (params: {
+    topic: string
+    difficulty: string
+    count: number
+    subtopic?: string
+    modality?: string
+    keywords?: string
+  }) => api.post<Question[]>('/api/questions/generate', params),
+
   importJson: (file: File) => {
     const form = new FormData()
     form.append('file', file)
